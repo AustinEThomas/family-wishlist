@@ -1,2 +1,2 @@
-// Paste the deployed Google Apps Script /exec URL here. Never put the family code here.
-window.WISHLIST_API = '';
+// Public deployment endpoint; family access code remains in Google Script Properties.
+window.WISHLIST_API = 'https://script.google.com/macros/s/AKfycbz_3CDVrhESNz-yEmpMePMBsygEM2m0v9CoCl-ZFMnNPVRCBjD9jfv6K2MdQDUciozfcA/exec';
