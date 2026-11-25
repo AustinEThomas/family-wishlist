@@ -108,3 +108,20 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
  .edit-form{grid-template-columns:minmax(0,1fr);gap:0}.edit-form .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.edit-form .actions button{width:100%}
 }
 @media(max-width:350px){#directory{padding:12px 10px}.wishlist-table .member-row{gap:10px}.wishlist-table .date-cell{font-size:13px}.wishlist-link{font-size:14px}}
+
+/* Mobile: each person is a distinct, self-contained card. */
+@media(max-width:620px){
+ #directory{background:transparent;border:0;padding:0;box-shadow:none}
+ .directory-heading{margin:0 0 16px;padding:0 2px}
+ .wishlist-table{margin:0 0 16px}
+ .wishlist-table .member-row{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px 12px;margin:0 0 12px;gap:10px 16px;box-shadow:0 2px 5px rgba(32,61,53,.045);grid-template-areas:"name actions" "birthday link" "date date"}
+ .wishlist-table .member-name{font-size:18px;line-height:1.35}
+ .wishlist-table .birthday-cell{font-size:17px}
+ .wishlist-table .date-cell{padding-top:10px;margin-top:2px}
+ .wishlist-table .member-row:has(+ .edit-row:not([hidden])){border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0;border-bottom-color:transparent}
+ .wishlist-table .edit-row:not([hidden]){background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;padding:0 12px 12px;margin-bottom:12px}
+ .wishlist-table .edit-row td{background:var(--soft);margin:0;border:0;padding:14px;border-radius:10px}
+ .directory-footer{padding:0 2px}
+ .date-group{margin-left:auto;gap:6px}
+}
+@media(max-width:350px){.wishlist-table .member-row{padding:12px;gap:10px}.wishlist-table .date-cell{gap:4px}.date-group{gap:4px}}
