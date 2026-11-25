@@ -86,38 +86,25 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 
 .date-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.date-group .confirm-button{margin:0;flex:none}.wishlist-table .row-actions{min-width:0}.wishlist-table .birthday-cell{font-weight:600}.wishlist-link{background:#e9eee8;border-radius:8px;padding:0 12px;text-decoration:none}.wishlist-link:hover{text-decoration:underline}@media(min-width:541px){.wishlist-table thead th:nth-child(1){width:23%}.wishlist-table thead th:nth-child(2){width:15%}.wishlist-table thead th:nth-child(3){width:20%}.wishlist-table thead th:nth-child(4){width:32%}.wishlist-table thead th:nth-child(5){width:10%}}@media(max-width:540px){.wishlist-table .member-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;grid-template-areas:"name name actions" "birthday link link" "date date date";gap:8px;padding:10px 2px 14px}.wishlist-table .birthday-cell{font-size:16px}.birthday-cell::before,.date-cell::before{font-size:12px}.wishlist-table .link-cell{text-align:right!important}.wishlist-link{font-size:15px;min-height:44px;padding:0 14px}.wishlist-table .date-cell{font-size:14px}.date-group{gap:10px}.wishlist-table .row-actions{justify-content:flex-end}.wishlist-table .date-cell::before{margin-bottom:0}.date-group .confirm-button{width:44px;height:44px}}
 
-/* Retain a real table at phone widths; compact date and link cells instead of cards. */
-@media(max-width:540px){
- #directory{padding:10px 8px}
- .wishlist-table{display:table;table-layout:fixed;width:100%;font-size:13px}
- .wishlist-table thead{display:table-header-group;position:static;width:auto;height:auto;overflow:visible;clip-path:none;white-space:normal}
- .wishlist-table tbody{display:table-row-group}
- .wishlist-table thead tr,.wishlist-table .member-row,.wishlist-table .edit-row{display:table-row}
- .wishlist-table .member-row{border:0}
- .wishlist-table .member-row>*,.wishlist-table thead th{display:table-cell;padding:9px 3px;border-bottom:1px solid var(--line);vertical-align:middle;text-align:left}
- .wishlist-table thead th{font-size:11px;line-height:1.2;overflow-wrap:normal}
- .wishlist-table thead th:nth-child(1){width:23%}
- .wishlist-table thead th:nth-child(2){width:17%}
- .wishlist-table thead th:nth-child(3){width:21%}
- .wishlist-table thead th:nth-child(4){width:26%}
- .wishlist-table thead th:nth-child(5){width:13%;text-align:center}
- .wishlist-table .member-name{font-size:14px;line-height:1.25}
- .wishlist-table .birthday-cell{font-size:14px;white-space:nowrap}
- .birthday-cell::before,.date-cell::before{display:none;content:none}
- .wishlist-table .link-cell{text-align:center!important}
- .wishlist-link{font-size:13px;line-height:1.2;min-height:44px;max-width:100%;padding:5px 6px;white-space:normal;justify-content:center;text-align:center}
- .wishlist-table .date-cell{font-size:12px;line-height:1.25}
- .date-group{display:flex;align-items:center;gap:2px;flex-wrap:nowrap}
- .date-group>span{min-width:0;overflow-wrap:normal}
- .date-group .confirm-button{width:30px;min-width:30px;height:44px;padding:0;font-size:18px;margin:0}
- .wishlist-table .row-actions{display:table-cell;padding-inline:0;text-align:center;min-width:0}
- .row-actions .pencil-button{width:100%;max-width:44px;padding:4px}
- .wishlist-table .edit-row td{display:table-cell;width:auto;padding:12px;margin:0;border-radius:0}
+
+/* Spacious, aligned mobile directory rows with a consistent two-column rhythm. */
+@media(max-width:620px){
+ #directory{padding:16px 12px}
+ .wishlist-table,.wishlist-table tbody{display:block;width:100%}
+ .wishlist-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ .wishlist-table .member-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"name actions" "birthday link" "date date";align-items:center;gap:12px 14px;padding:14px 4px 16px;border-bottom:1px solid var(--line)}
+ .wishlist-table .member-row>*{display:block;min-width:0;padding:0;border:0;text-align:left;overflow-wrap:anywhere}
+ .wishlist-table .member-name{grid-area:name;font-size:17px;line-height:1.35}
+ .wishlist-table .birthday-cell{grid-area:birthday;font-size:16px;line-height:1.4;font-weight:600}
+ .birthday-cell::before,.date-cell::before{display:block;content:attr(data-label);font-size:12px;font-weight:500;color:var(--muted);margin-bottom:4px}
+ .wishlist-table .link-cell{grid-area:link;text-align:right!important}
+ .wishlist-link{display:inline-flex;align-items:center;justify-content:center;width:100%;max-width:170px;min-height:44px;padding:10px 12px;font-size:15px;white-space:normal;background:var(--green);color:white;border-radius:9px;text-decoration:none}
+ .wishlist-table .row-actions{grid-area:actions;display:flex;justify-content:flex-end;min-width:0}
+ .wishlist-table .date-cell{grid-area:date;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;padding-top:8px;border-top:1px solid var(--line);font-size:14px}
+ .wishlist-table .date-cell::before{margin:0}
+ .date-group{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;margin-left:auto}
+ .date-group .confirm-button{width:44px;min-width:44px;height:44px;margin:0;font-size:21px}
+ .wishlist-table .edit-row{display:block}.wishlist-table .edit-row td{display:block;width:100%;padding:12px;margin:8px 0;border-radius:8px}
+ .edit-form{grid-template-columns:minmax(0,1fr);gap:0}.edit-form .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.edit-form .actions button{width:100%}
 }
-@media(max-width:360px){
- .wishlist-table thead th{font-size:10px}
- .wishlist-table .member-name,.wishlist-table .birthday-cell{font-size:13px}
- .wishlist-table .date-cell{font-size:11px}
- .wishlist-link{font-size:12px;padding-inline:3px}
- .date-group .confirm-button{width:26px;min-width:26px}
-}
+@media(max-width:350px){#directory{padding:12px 10px}.wishlist-table .member-row{gap:10px}.wishlist-table .date-cell{font-size:13px}.wishlist-link{font-size:14px}}
