@@ -1,0 +1,52 @@
+name: Deploy Apps Script
+on:
+  push:
+    branches: [main]
+    paths: ['backend/**', '.github/workflows/deploy-apps-script.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: apps-script-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install clasp
+        run: npm install --global @google/clasp@3.0.6
+      - name: Deploy existing web app
+        env:
+          CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+          SCRIPT_ID: ${{ secrets.APPS_SCRIPT_ID }}
+          DEPLOYMENT_ID: AKfycbz_3CDVrhESNz-yEmpMePMBsygEM2m0v9CoCl-ZFMnNPVRCBjD9jfv6K2MdQDUciozfcA
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$CLASPRC_JSON" || -z "$SCRIPT_ID" ]]; then
+            echo "::error::Configure CLASPRC_JSON and APPS_SCRIPT_ID in repository Actions secrets."
+            exit 1
+          fi
+          umask 077
+          printf '%s' "$CLASPRC_JSON" > "$HOME/.clasprc.json"
+          trap 'rm -f "$HOME/.clasprc.json"; rm -rf "${work:-}"' EXIT
+          work="$(mktemp -d)"
+          cd "$work"
+          node -e 'require("fs").writeFileSync(".clasp.json",JSON.stringify({scriptId:process.env.SCRIPT_ID,rootDir:"."}))'
+          clasp pull
+          if [[ -f Code.js && ! -f Code.gs ]]; then
+            cp "$GITHUB_WORKSPACE/backend/Code.gs" Code.js
+          elif [[ -f Code.gs && ! -f Code.js ]]; then
+            cp "$GITHUB_WORKSPACE/backend/Code.gs" Code.gs
+          else
+            echo "::error::Expected exactly one existing Code.js or Code.gs file; stopping to avoid replacing the wrong project."
+            exit 1
+          fi
+          test -f appsscript.json
+          clasp push --force
+          clasp update-deployment "$DEPLOYMENT_ID" --description "GitHub Actions ${GITHUB_SHA:0:7}"
