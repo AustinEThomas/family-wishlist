@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '22'
       - name: Install clasp
-        run: npm install --global @google/clasp@3.0.6
+        run: npm install --global @google/clasp@latest
       - name: Deploy existing web app
         env:
           CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
