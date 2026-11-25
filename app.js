@@ -27,13 +27,13 @@ function render(members){
   const row=document.createElement('tr'), details=document.createElement('tr');row.className='member-row';
   details.hidden=true;details.className='edit-row';details.id='edit-row-'+i;
   const name=node('th',m.name,'member-name');name.scope='row';row.append(name);
-  const birthdayCell=node('td',m.birthday||'—','birthday-cell');birthdayCell.dataset.label='Birthday';row.append(birthdayCell);
+  const birthdayCell=node('td','','birthday-cell');const birthdayCaption=node('span','Birthday','birthday-label');birthdayCaption.setAttribute('aria-hidden','true');birthdayCell.append(birthdayCaption,node('span',m.birthday||'—','birthday-value'));row.append(birthdayCell);
   const linkCell=document.createElement('td');linkCell.className='link-cell';linkCell.dataset.label='Wishlist';
   if(/^https?:\/\/[^\/?#\s]+[^\s]*$/i.test(m.url)){const a=node('a','View list','wishlist-link');a.href=m.url;a.target='_blank';a.rel='noopener noreferrer';linkCell.append(a);}else linkCell.append(node('span','Not set','muted'));
   row.append(linkCell);
   const date=m.confirmed?new Date(m.confirmed):null;
   const fresh=date&&Date.now()-date.getTime()<90*86400000;
-  const dateCell=node('td','','date-cell');dateCell.dataset.label='Last confirmed';const dateGroup=node('div','','date-group');dateGroup.append(node('span',date?date.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'Not yet',fresh?'fresh':'stale'));dateCell.append(dateGroup);row.append(dateCell);
+  const dateCell=node('td','','date-cell');const confirmedCaption=node('span','Last confirmed','confirmed-label');confirmedCaption.setAttribute('aria-hidden','true');dateCell.append(confirmedCaption);const dateGroup=node('div','','date-group');dateGroup.append(node('span',date?date.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'Not yet',fresh?'fresh':'stale'));dateCell.append(dateGroup);row.append(dateCell);
   const editCell=document.createElement('td'),edit=node('button','','pencil-button');
   edit.type='button';edit.title='Edit '+m.name;edit.setAttribute('aria-label','Edit '+m.name);edit.setAttribute('aria-expanded','false');edit.setAttribute('aria-controls',details.id);
   const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),path=document.createElementNS(ns,'path');
