@@ -23,7 +23,8 @@ function doPost(e) {
     if(s.getRange('E1').getValue()!=='Birthday') { s.getRange('E1').setValue('Birthday').setFontWeight('bold'); s.getRange('E2:E').setNumberFormat('@'); }
     if(p.action==='add'){
       const name=String(p.name||'').trim();
-      if(!name || name.length>60 || /^[=+@-]/.test(name)) return out({error:'Invalid name.'});
+      if(!name || /^[=+@-]/.test(name)) return out({error:'Enter a valid name.'});
+      if(name.length>20) return out({error:'Name must be 20 characters or fewer.'});
       s.appendRow([Utilities.getUuid(),name,'','','']);
     } else if(p.action==='update'||p.action==='confirm'){
       const i=rows.findIndex(r=>r[0]===p.id);
