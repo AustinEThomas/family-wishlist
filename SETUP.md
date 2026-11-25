@@ -1,6 +1,6 @@
 # Family Wishlist setup
 1. Create a private Google Sheet. Open Extensions → Apps Script and paste backend/Code.gs.
-2. Run setup once and authorize it. In Project Settings → Script properties, add FAMILY_CODE with a memorable, hard-to-guess passphrase (at least four random words). Never commit it.
+2. Run setup once from the spreadsheet-bound script editor and authorize it. This saves SPREADSHEET_ID privately in Script Properties, so deployed web requests can open the correct spreadsheet. In Project Settings → Script properties, add FAMILY_CODE with a memorable, hard-to-guess passphrase (at least four random words). Never commit it.
 3. Deploy → New deployment → Web app. Execute as Me; Who has access: Anyone. Copy the /exec URL.
 4. Set window.WISHLIST_API in config.js to the URL. It is not a secret.
 5. GitHub Settings → Pages → Deploy from a branch → main → / (root).
