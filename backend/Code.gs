@@ -28,7 +28,7 @@ function doPost(e) {
       const i=rows.findIndex(r=>r[0]===p.id);
       if(i<0) return out({error:'Member not found.'});
       const url=p.action==='update'?String(p.url||'').trim():String(rows[i][2]||'');
-      if(!/^https:\/\/(?:www\.)?amazon\.com\/(?:hz\/wishlist\/ls|gp\/registry\/wishlist|wishlist)\/[A-Za-z0-9]+(?:[/?#][^\s]*)?$/.test(url)) return out({error:'Enter a valid Amazon.com wishlist URL.'});
+      if(!/^https?:\/\/[^\/?#\s]+[^\s]*$/i.test(url) || url.length>4096) return out({error:'Enter a valid website URL beginning with https:// or http://.'});
       s.getRange(i+2,3,1,2).setValues([[url,new Date()]]);
     } else if(p.action!=='list') return out({error:'Unknown action.'});
     SpreadsheetApp.flush();
