@@ -20,13 +20,14 @@ function render(members){
  if(!members.length){root.append(node('p','No family members yet. Add one below.'));return;}
  const table=node('table','','wishlist-table');
  const head=document.createElement('thead'), hr=document.createElement('tr');
- for(const label of ['Name','Wishlist','Last confirmed','Edit']){const th=node('th',label);th.scope='col';hr.append(th);}
+ for(const label of ['Name','Birthday','Wishlist','Last confirmed','Actions']){const th=node('th',label);th.scope='col';hr.append(th);}
  head.append(hr);table.append(head);
  const body=document.createElement('tbody');table.append(body);
  for(const [i,m] of members.entries()){
   const row=document.createElement('tr'), details=document.createElement('tr');
   details.hidden=true;details.className='edit-row';details.id='edit-row-'+i;
   const name=node('th',m.name,'member-name');name.scope='row';row.append(name);
+  row.append(node('td',m.birthday||'—','birthday-cell'));
   const linkCell=document.createElement('td');
   if(/^https?:\/\/[^\/?#\s]+[^\s]*$/i.test(m.url)){const a=node('a','View list','wishlist-link');a.href=m.url;a.target='_blank';a.rel='noopener noreferrer';linkCell.append(a);}else linkCell.append(node('span','Not set','muted'));
   row.append(linkCell);
@@ -36,15 +37,16 @@ function render(members){
   const editCell=document.createElement('td'),edit=node('button','','pencil-button');
   edit.type='button';edit.title='Edit '+m.name;edit.setAttribute('aria-label','Edit '+m.name);edit.setAttribute('aria-expanded','false');edit.setAttribute('aria-controls',details.id);
   const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),path=document.createElementNS(ns,'path');
-  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','19');svg.setAttribute('height','19');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');path.setAttribute('d','M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z');svg.append(path);edit.append(svg);editCell.append(edit);row.append(editCell);
-  const panel=document.createElement('td');panel.colSpan=4;
+  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','19');svg.setAttribute('height','19');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');path.setAttribute('d','M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z');svg.append(path);edit.append(svg);const quick=node('button','✓','confirm-button');quick.type='button';quick.title='Confirm current list';quick.setAttribute('aria-label','Confirm wishlist for '+m.name);quick.onclick=()=>run('confirm',{id:m.id});quick.disabled=!m.url;if(m.url)editCell.append(quick);editCell.append(edit);editCell.className='row-actions';row.append(editCell);
+  const panel=document.createElement('td');panel.colSpan=5;
   const form=node('form','','edit-form');const label=node('label','Wishlist link');label.htmlFor='wishlist-url-'+i;
-  const input=document.createElement('input');input.id=label.htmlFor;input.type='url';input.required=true;input.value=m.url||'';input.placeholder='https://…';
-  const actions=node('div','','actions');const save=node('button','Save link');save.type='submit';
+  const input=document.createElement('input');input.id=label.htmlFor;input.type='url';input.required=false;input.value=m.url||'';input.placeholder='https://…';
+  const actions=node('div','','actions');const save=node('button','Save changes');save.type='submit';
   const confirm=node('button','Confirm current list','secondary');confirm.type='button';confirm.onclick=()=>run('confirm',{id:m.id});
   const cancel=node('button','Cancel','secondary');cancel.type='button';cancel.onclick=()=>{details.hidden=true;edit.setAttribute('aria-expanded','false');edit.focus();};
   actions.append(save);if(m.url)actions.append(confirm);actions.append(cancel);
-  form.append(label,input,actions);form.onsubmit=e=>{e.preventDefault();run('update',{id:m.id,url:input.value});};
+  const birthdayLabel=node('label','Birthday (MM/DD)');birthdayLabel.htmlFor='birthday-'+i;const birthday=document.createElement('input');birthday.id=birthdayLabel.htmlFor;birthday.type='text';birthday.placeholder='MM/DD';birthday.maxLength=5;birthday.pattern='[0-9]{2}/[0-9]{2}';birthday.value=m.birthday||'';
+  form.append(label,input,birthdayLabel,birthday,actions);form.onsubmit=e=>{e.preventDefault();run('update',{id:m.id,url:input.value,birthday:birthday.value});};
   edit.onclick=()=>{const opening=details.hidden;for(const d of body.querySelectorAll('.edit-row'))d.hidden=true;for(const b of body.querySelectorAll('.pencil-button'))b.setAttribute('aria-expanded','false');details.hidden=!opening;edit.setAttribute('aria-expanded',String(opening));if(opening)input.focus();};
   panel.append(form);details.append(panel);body.append(row,details);
  }
