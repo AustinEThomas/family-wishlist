@@ -45,7 +45,17 @@ function render(members){
   const confirm=node('button','Confirm current list','secondary');confirm.type='button';confirm.onclick=()=>run('confirm',{id:m.id});
   const cancel=node('button','Cancel','secondary');cancel.type='button';cancel.onclick=()=>{details.hidden=true;edit.setAttribute('aria-expanded','false');edit.focus();};
   actions.append(save);if(m.url)actions.append(confirm);actions.append(cancel);
-  const birthdayLabel=node('label','Birthday (MM/DD)');birthdayLabel.htmlFor='birthday-'+i;const birthday=document.createElement('input');birthday.id=birthdayLabel.htmlFor;birthday.type='text';birthday.placeholder='MM/DD';birthday.maxLength=5;birthday.pattern='[0-9]{2}/[0-9]{2}';birthday.value=m.birthday||'';
+  const birthdayLabel=node('label','Birthday (MM/DD)');birthdayLabel.htmlFor='birthday-'+i;const birthday=document.createElement('input');birthday.id=birthdayLabel.htmlFor;birthday.type='text';birthday.placeholder='MM/DD';birthday.maxLength=5;birthday.pattern='[0-9]{2}/[0-9]{2}';birthday.value=m.birthday||'';birthday.inputMode='numeric';birthday.maxLength=5;
+  birthday.addEventListener('input',e=>{
+    const raw=birthday.value, pos=birthday.selectionStart??raw.length;
+    const digits=raw.replace(/[^0-9]/g,'').slice(0,4);
+    const before=raw.slice(0,pos).replace(/[^0-9]/g,'').length;
+    const deleting=(e.inputType||'').startsWith('delete');
+    const formatted=digits.length>2?digits.slice(0,2)+'/'+digits.slice(2):digits.length===2&&!deleting?digits+'/':digits;
+    birthday.value=formatted;
+    const caret=Math.min(formatted.length,before+(formatted.includes('/')&&before>=2?1:0));
+    birthday.setSelectionRange(caret,caret);
+  });
   form.append(label,input,birthdayLabel,birthday,actions);form.onsubmit=e=>{e.preventDefault();run('update',{id:m.id,url:input.value,birthday:birthday.value});};
   edit.onclick=()=>{const opening=details.hidden;for(const d of body.querySelectorAll('.edit-row'))d.hidden=true;for(const b of body.querySelectorAll('.pencil-button'))b.setAttribute('aria-expanded','false');details.hidden=!opening;edit.setAttribute('aria-expanded',String(opening));if(opening)input.focus();};
   panel.append(form);details.append(panel);body.append(row,details);
