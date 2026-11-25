@@ -71,4 +71,9 @@ $('add-cancel').onclick=()=>toggleAdd(false);
 $('add').onsubmit=async e=>{e.preventDefault();if(await run('add',{name:$('name').value})){toggleAdd(false);status('Family member added.');}};
 $('refresh').onclick=()=>run('list');
 $('logout').onclick=()=>{if($('add-dialog').open)$('add-dialog').close();code='';localStorage.removeItem('wishlist-access');$('members').replaceChildren();$('directory').hidden=true;$('gate').hidden=false;status('');};
-try{code=localStorage.getItem('wishlist-access')||'';if(code)run('list');}catch(e){}
+async function restoreSession(){
+ try{code=localStorage.getItem('wishlist-access')||'';}catch(e){}
+ if(code){$('gate').hidden=true;if(await run('list'))return;}
+ $('gate').hidden=false;
+}
+restoreSession();
