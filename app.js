@@ -20,7 +20,7 @@ function render(members){
  if(!members.length){root.append(node('p','No family members yet. Use Add member to get started.'));return;}
  const table=node('table','','wishlist-table');
  const head=document.createElement('thead'), hr=document.createElement('tr');
- for(const label of ['Name','Birthday','Wishlist','Last confirmed','Actions']){const th=node('th',label);th.scope='col';hr.append(th);}
+ for(const label of ['Name','Birthday','Wishlist','Last confirmed','Edit']){const th=node('th',label);th.scope='col';hr.append(th);}
  head.append(hr);table.append(head);
  const body=document.createElement('tbody');table.append(body);
  for(const [i,m] of members.entries()){
@@ -33,11 +33,11 @@ function render(members){
   row.append(linkCell);
   const date=m.confirmed?new Date(m.confirmed):null;
   const fresh=date&&Date.now()-date.getTime()<90*86400000;
-  const dateCell=node('td',date?date.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'Not yet','date-cell '+(fresh?'fresh':'stale'));dateCell.dataset.label='Last confirmed';row.append(dateCell);
+  const dateCell=node('td','','date-cell');dateCell.dataset.label='Last confirmed';const dateGroup=node('div','','date-group');dateGroup.append(node('span',date?date.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'Not yet',fresh?'fresh':'stale'));dateCell.append(dateGroup);row.append(dateCell);
   const editCell=document.createElement('td'),edit=node('button','','pencil-button');
   edit.type='button';edit.title='Edit '+m.name;edit.setAttribute('aria-label','Edit '+m.name);edit.setAttribute('aria-expanded','false');edit.setAttribute('aria-controls',details.id);
   const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),path=document.createElementNS(ns,'path');
-  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','19');svg.setAttribute('height','19');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');path.setAttribute('d','M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z');svg.append(path);edit.append(svg);const quick=node('button','✓','confirm-button');quick.type='button';quick.title='Confirm current list';quick.setAttribute('aria-label','Confirm wishlist for '+m.name);quick.onclick=()=>run('confirm',{id:m.id});quick.disabled=!m.url;if(m.url)editCell.append(quick);editCell.append(edit);editCell.className='row-actions';row.append(editCell);
+  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','19');svg.setAttribute('height','19');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.setAttribute('aria-hidden','true');path.setAttribute('d','M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z');svg.append(path);edit.append(svg);const quick=node('button','✓','confirm-button');quick.type='button';quick.title='Confirm current list';quick.setAttribute('aria-label','Confirm wishlist for '+m.name);quick.onclick=()=>run('confirm',{id:m.id});quick.disabled=!m.url;if(m.url)dateGroup.append(quick);editCell.append(edit);editCell.className='row-actions';row.append(editCell);
   const panel=document.createElement('td');panel.colSpan=5;
   const form=node('form','','edit-form');const label=node('label','Wishlist link');label.htmlFor='wishlist-url-'+i;
   const input=document.createElement('input');input.id=label.htmlFor;input.type='url';input.required=false;input.value=m.url||'';input.placeholder='https://…';
