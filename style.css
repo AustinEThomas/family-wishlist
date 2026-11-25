@@ -187,3 +187,16 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
  .wishlist-table .birthday-cell,.wishlist-table .date-cell{font-size:14px}
 }
 @media(max-width:380px){.wishlist-table .member-row{grid-template-columns:minmax(53px,.8fr) minmax(0,1.8fr) 44px;column-gap:6px}.date-group{gap:8px}.wishlist-table .birthday-cell,.wishlist-table .date-cell{font-size:13px}}
+
+/* Match the visible gap on either side of the confirmation button on phones. */
+@media(max-width:620px){
+ .wishlist-table .member-row{column-gap:14px;grid-template-columns:minmax(54px,.8fr) minmax(0,1.8fr) 44px}
+ .date-group{gap:14px;justify-content:flex-end}
+ .date-group>span{flex:1 1 auto;text-align:right}
+ .date-group>span:only-child{text-align:left}
+ .wishlist-table .row-actions{padding-inline:0}
+}
+@media(max-width:380px){
+ .wishlist-table .member-row{column-gap:10px;grid-template-columns:minmax(46px,.65fr) minmax(0,2fr) 44px}
+ .date-group{gap:10px}
+}
