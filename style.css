@@ -172,31 +172,35 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 /* Center both values vertically with the confirmation control. */
 @media(max-width:620px){.wishlist-table .birthday-cell::before{margin-bottom:6px}.wishlist-table .birthday-cell{line-height:44px}.wishlist-table .birthday-cell::before{line-height:1.4}.wishlist-table .date-cell::before{line-height:1.4}}
 
-/* Keep confirmation and edit controls adjacent, aligned and in reading order. */
-.date-group{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.date-group>span{min-width:0}
-.date-group .confirm-button{flex:0 0 44px;width:44px;height:44px;margin:0}
-@media(max-width:620px){
- .wishlist-table .member-row{grid-template-columns:minmax(60px,0.85fr) minmax(0,1.65fr) 44px;column-gap:10px}
- .wishlist-table .date-cell{min-width:0}
- .date-group{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:nowrap;min-height:44px}
- .date-group>span{flex:1 1 auto;white-space:normal;overflow-wrap:normal}
- .date-group .confirm-button{flex:0 0 44px}
- .wishlist-table .row-actions{align-items:flex-end;justify-content:flex-end}
- .wishlist-table .row-actions .pencil-button{flex:0 0 44px}
- .wishlist-table .birthday-cell,.wishlist-table .date-cell{font-size:14px}
-}
-@media(max-width:380px){.wishlist-table .member-row{grid-template-columns:minmax(53px,.8fr) minmax(0,1.8fr) 44px;column-gap:6px}.date-group{gap:8px}.wishlist-table .birthday-cell,.wishlist-table .date-cell{font-size:13px}}
 
-/* Match the visible gap on either side of the confirmation button on phones. */
+/* Desktop retains its native table cells. */
+.date-group{display:flex;align-items:center;gap:12px}
+.date-group .confirm-button{flex:0 0 44px;margin:0}
+/* Mobile: use one shared grid for the entire card, not nested action layouts.
+   The two equal flexible spacer tracks center the check between date and pencil. */
 @media(max-width:620px){
- .wishlist-table .member-row{column-gap:14px;grid-template-columns:minmax(54px,.8fr) minmax(0,1.8fr) 44px}
- .date-group{gap:14px;justify-content:flex-end}
- .date-group>span{flex:1 1 auto;text-align:right}
- .date-group>span:only-child{text-align:left}
- .wishlist-table .row-actions{padding-inline:0}
+ .wishlist-table .member-row{
+  grid-template-columns:minmax(58px,1fr) max-content minmax(4px,1fr) 44px minmax(4px,1fr) 44px;
+  grid-template-rows:auto auto 44px;
+  grid-template-areas:none;
+  column-gap:0;row-gap:8px;
+  position:relative;
+ }
+ .wishlist-table .member-row::after{content:"";grid-column:1/-1;grid-row:2;align-self:start;height:1px;background:var(--line);pointer-events:none}
+ .wishlist-table .member-name{grid-column:1/3;grid-row:1;padding-right:10px}
+ .wishlist-table .link-cell{grid-column:3/-1;grid-row:1}
+ .wishlist-table .birthday-cell{display:grid;grid-template-rows:subgrid;grid-column:1;grid-row:2/4;padding:0;border:0;line-height:1.4;align-items:center;align-self:stretch;margin:0}
+ .wishlist-table .birthday-cell::before{align-self:end;margin:10px 0 0}
+ .wishlist-table .date-cell,.date-group{display:contents}
+ .wishlist-table .date-cell::before{grid-column:2/5;grid-row:2;align-self:end;margin:10px 0 0}
+ .date-group>span{grid-column:2;grid-row:3;align-self:center;text-align:left;white-space:nowrap;font-size:14px;font-weight:600;line-height:1.4}
+ .date-group .confirm-button{grid-column:4;grid-row:3;justify-self:center;align-self:center;width:44px;height:44px;margin:0}
+ .wishlist-table .row-actions{grid-column:6;grid-row:3;padding:0;border:0;align-self:center;justify-self:center}
+ .wishlist-table .birthday-cell{font-size:14px;font-weight:600}
+ .wishlist-table .row-actions .pencil-button{width:44px;height:44px}
 }
 @media(max-width:380px){
- .wishlist-table .member-row{column-gap:10px;grid-template-columns:minmax(46px,.65fr) minmax(0,2fr) 44px}
- .date-group{gap:10px}
+ .wishlist-table .member-row{grid-template-columns:minmax(49px,1fr) max-content minmax(3px,1fr) 44px minmax(3px,1fr) 44px;padding-inline:12px}
+ .wishlist-table .birthday-cell,.date-group>span{font-size:12px}
+ .wishlist-table .member-name{font-size:17px}
 }
