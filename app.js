@@ -11,7 +11,7 @@ async function request(action,fields={}){
 }
 async function run(action,fields={}){
  if(busy)return false;busy=true;status('Saving or loading…');document.querySelectorAll('button').forEach(b=>b.disabled=true);
- try{const members=await request(action,fields);render(members);$('gate').hidden=true;$('directory').hidden=false;status('');return true;}
+ try{const members=await request(action,fields);render(members);$('gate').hidden=true;$('directory').hidden=false;status(action==='confirm'?'Wishlist confirmed.':action==='update'?'Changes saved.':action==='add'?'Family member added.':'');return true;}
  catch(e){status(e.message||'Unable to connect.');return false;}
  finally{busy=false;document.querySelectorAll('button').forEach(b=>b.disabled=false);}
 }
@@ -24,16 +24,16 @@ function render(members){
  head.append(hr);table.append(head);
  const body=document.createElement('tbody');table.append(body);
  for(const [i,m] of members.entries()){
-  const row=document.createElement('tr'), details=document.createElement('tr');
+  const row=document.createElement('tr'), details=document.createElement('tr');row.className='member-row';
   details.hidden=true;details.className='edit-row';details.id='edit-row-'+i;
   const name=node('th',m.name,'member-name');name.scope='row';row.append(name);
-  row.append(node('td',m.birthday||'—','birthday-cell'));
-  const linkCell=document.createElement('td');
+  const birthdayCell=node('td',m.birthday||'—','birthday-cell');birthdayCell.dataset.label='Birthday';row.append(birthdayCell);
+  const linkCell=document.createElement('td');linkCell.className='link-cell';linkCell.dataset.label='Wishlist';
   if(/^https?:\/\/[^\/?#\s]+[^\s]*$/i.test(m.url)){const a=node('a','View list','wishlist-link');a.href=m.url;a.target='_blank';a.rel='noopener noreferrer';linkCell.append(a);}else linkCell.append(node('span','Not set','muted'));
   row.append(linkCell);
   const date=m.confirmed?new Date(m.confirmed):null;
   const fresh=date&&Date.now()-date.getTime()<90*86400000;
-  row.append(node('td',date?date.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'Not yet',fresh?'fresh':'stale'));
+  const dateCell=node('td',date?date.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'Not yet','date-cell '+(fresh?'fresh':'stale'));dateCell.dataset.label='Last confirmed';row.append(dateCell);
   const editCell=document.createElement('td'),edit=node('button','','pencil-button');
   edit.type='button';edit.title='Edit '+m.name;edit.setAttribute('aria-label','Edit '+m.name);edit.setAttribute('aria-expanded','false');edit.setAttribute('aria-controls',details.id);
   const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),path=document.createElementNS(ns,'path');
