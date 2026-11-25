@@ -147,3 +147,27 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
  .wishlist-table .birthday-cell{font-size:16px}
  .date-group{gap:2px}
 }
+
+/* Balanced metadata and a larger primary action on member cards. */
+.name-hint{font-size:12px;color:var(--muted);margin:-8px 0 14px}
+@media(max-width:620px){
+ .wishlist-table .member-row{grid-template-columns:minmax(0,1fr) minmax(0,1.8fr) 44px;gap:14px 10px}
+ .wishlist-table .member-name{grid-column:1/3;grid-row:1;max-width:100%;padding-right:0}
+ .wishlist-table .member-row{grid-template-areas:"name name link" "birthday date actions";grid-template-columns:minmax(65px,1fr) minmax(0,1.9fr) 44px}
+ /* Use the full top row for two balanced regions, independently of metadata columns. */
+ .wishlist-table .member-row{grid-template-areas:"name link link" "birthday date actions";grid-template-columns:minmax(0,1fr) minmax(0,1.9fr) 44px}
+ .wishlist-table .member-name{grid-area:name;grid-column:auto;grid-row:auto;overflow-wrap:anywhere}
+ .wishlist-table .link-cell{grid-area:link}
+ .wishlist-link{width:100%;max-width:180px;min-height:50px;font-size:16px;padding:12px 18px}
+ .wishlist-table .birthday-cell,.wishlist-table .date-cell{font-size:14px;font-weight:600;line-height:1.4;padding-top:12px;margin:0}
+ .wishlist-table .birthday-cell::before,.wishlist-table .date-cell::before{font-size:12px;font-weight:500;line-height:1.4;margin:0 0 6px}
+ .date-group{min-height:44px;gap:10px;align-items:center}
+ .date-group>span{font-size:inherit;font-weight:inherit;line-height:inherit}
+ .wishlist-table .birthday-cell{display:flex;flex-direction:column}
+ .wishlist-table .birthday-cell::before{flex:none}
+ .wishlist-table .birthday-cell{justify-content:flex-start}
+ .wishlist-table .row-actions{padding-top:12px}
+}
+@media(max-width:380px){.wishlist-table .member-row{grid-template-columns:minmax(0,1fr) minmax(0,1.9fr) 44px;gap:12px 6px}.date-group{gap:8px}.wishlist-link{max-width:150px}.wishlist-table .birthday-cell,.wishlist-table .date-cell{font-size:13px}}
+/* Center both values vertically with the confirmation control. */
+@media(max-width:620px){.wishlist-table .birthday-cell::before{margin-bottom:6px}.wishlist-table .birthday-cell{line-height:44px}.wishlist-table .birthday-cell::before{line-height:1.4}.wishlist-table .date-cell::before{line-height:1.4}}
