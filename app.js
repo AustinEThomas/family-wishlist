@@ -1,7 +1,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 let code='',busy=false;
-const status=msg=>{$('status').textContent=msg;};
+const status=msg=>{const target=$('add-dialog').open?'add-status':$('directory').hidden?'status':'directory-status';for(const id of ['status','directory-status','add-status'])$(id).textContent=id===target?msg:'';};
 function node(tag,text,cls){const n=document.createElement(tag);n.textContent=text;if(cls)n.className=cls;return n;}
 async function request(action,fields={}){
  if(!window.WISHLIST_API)throw Error('Setup required: configure the Google Apps Script endpoint.');
@@ -42,9 +42,8 @@ function render(members){
   const form=node('form','','edit-form');const label=node('label','Wishlist link');label.htmlFor='wishlist-url-'+i;
   const input=document.createElement('input');input.id=label.htmlFor;input.type='url';input.required=false;input.value=m.url||'';input.placeholder='https://…';
   const actions=node('div','','actions');const save=node('button','Save changes');save.type='submit';
-  const confirm=node('button','Confirm current list','secondary');confirm.type='button';confirm.onclick=()=>run('confirm',{id:m.id});
-  const cancel=node('button','Cancel','secondary');cancel.type='button';cancel.onclick=()=>{details.hidden=true;edit.setAttribute('aria-expanded','false');edit.focus();};
-  actions.append(save);if(m.url)actions.append(confirm);actions.append(cancel);
+    const cancel=node('button','Cancel','secondary');cancel.type='button';cancel.onclick=()=>{details.hidden=true;edit.setAttribute('aria-expanded','false');edit.focus();};
+  actions.append(cancel,save);
   const birthdayLabel=node('label','Birthday (MM/DD)');birthdayLabel.htmlFor='birthday-'+i;const birthday=document.createElement('input');birthday.id=birthdayLabel.htmlFor;birthday.type='text';birthday.placeholder='MM/DD';birthday.maxLength=5;birthday.pattern='[0-9]{2}/[0-9]{2}';birthday.value=m.birthday||'';birthday.inputMode='numeric';birthday.maxLength=5;
   birthday.addEventListener('input',e=>{
     const raw=birthday.value, pos=birthday.selectionStart??raw.length;
@@ -56,17 +55,20 @@ function render(members){
     const caret=Math.min(formatted.length,before+(formatted.includes('/')&&before>=2?1:0));
     birthday.setSelectionRange(caret,caret);
   });
-  form.append(label,input,birthdayLabel,birthday,actions);form.onsubmit=e=>{e.preventDefault();run('update',{id:m.id,url:input.value,birthday:birthday.value});};
+  const urlField=node('div','','form-field');urlField.append(label,input);const birthdayField=node('div','','form-field');birthdayField.append(birthdayLabel,birthday);form.append(urlField,birthdayField,actions);form.onsubmit=e=>{e.preventDefault();run('update',{id:m.id,url:input.value,birthday:birthday.value});};
   edit.onclick=()=>{const opening=details.hidden;for(const d of body.querySelectorAll('.edit-row'))d.hidden=true;for(const b of body.querySelectorAll('.pencil-button'))b.setAttribute('aria-expanded','false');details.hidden=!opening;edit.setAttribute('aria-expanded',String(opening));if(opening)input.focus();};
   panel.append(form);details.append(panel);body.append(row,details);
  }
  root.append(table);
 }
 $('login').onsubmit=async e=>{e.preventDefault();code=$('code').value;if(await run('list')){if($('remember').checked)localStorage.setItem('wishlist-access',code);else localStorage.removeItem('wishlist-access');$('code').value='';}};
-function toggleAdd(open){$('add').hidden=!open;$('add-toggle').setAttribute('aria-expanded',String(open));if(open)$('name').focus();else{$('name').value='';$('add-toggle').focus();}}
-$('add-toggle').onclick=()=>toggleAdd($('add').hidden);
+function toggleAdd(open){const d=$('add-dialog');if(open&&!d.open){$('add-status').textContent='';d.showModal();$('add-toggle').setAttribute('aria-expanded','true');$('name').focus();}else if(!open&&d.open){d.close();}}
+$('add-dialog').addEventListener('close',()=>{$('add-toggle').setAttribute('aria-expanded','false');$('name').value='';$('add-status').textContent='';$('add-toggle').focus();});
+$('add-dialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();});
+$('add-close').onclick=()=>toggleAdd(false);
+$('add-toggle').onclick=()=>toggleAdd(!$('add-dialog').open);
 $('add-cancel').onclick=()=>toggleAdd(false);
-$('add').onsubmit=async e=>{e.preventDefault();if(await run('add',{name:$('name').value}))toggleAdd(false);};
+$('add').onsubmit=async e=>{e.preventDefault();if(await run('add',{name:$('name').value})){toggleAdd(false);status('Family member added.');}};
 $('refresh').onclick=()=>run('list');
-$('logout').onclick=()=>{$('add').hidden=true;$('name').value='';$('add-toggle').setAttribute('aria-expanded','false');code='';localStorage.removeItem('wishlist-access');$('members').replaceChildren();$('directory').hidden=true;$('gate').hidden=false;status('');};
+$('logout').onclick=()=>{if($('add-dialog').open)$('add-dialog').close();code='';localStorage.removeItem('wishlist-access');$('members').replaceChildren();$('directory').hidden=true;$('gate').hidden=false;status('');};
 try{code=localStorage.getItem('wishlist-access')||'';if(code)run('list');}catch(e){}
