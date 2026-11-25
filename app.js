@@ -24,11 +24,11 @@ function render(members){
   const fresh=date&&Date.now()-date.getTime()<90*86400000;
   card.append(node('p',date?'Last confirmed: '+date.toLocaleDateString():'Not confirmed yet',fresh?'fresh':'stale'));
   const actions=node('div','','actions');
-  if(/^https:\/\/(?:www\.)?amazon\.com\//.test(m.url)){const a=node('a','Open wishlist','action');a.href=m.url;a.target='_blank';a.rel='noopener noreferrer';actions.append(a);}
+  if(/^https?:\/\/[^\/?#\s]+[^\s]*$/i.test(m.url)){const a=node('a','Open wishlist','action');a.href=m.url;a.target='_blank';a.rel='noopener noreferrer';actions.append(a);}
   const edit=node('button','Update link','secondary');const confirm=node('button','Confirm current list','secondary');
   edit.onclick=()=>{form.hidden=!form.hidden;input.focus();};confirm.onclick=()=>run('confirm',{id:m.id});
   actions.append(edit);if(m.url)actions.append(confirm);card.append(actions);
-  const form=node('form','');form.hidden=true;const input=document.createElement('input');input.type='url';input.required=true;input.value=m.url||'';input.placeholder='Amazon wishlist URL';input.setAttribute('aria-label','Amazon wishlist URL');
+  const form=node('form','');form.hidden=true;const input=document.createElement('input');input.type='url';input.required=true;input.value=m.url||'';input.placeholder='Wishlist URL';input.setAttribute('aria-label','Wishlist URL');
   const save=node('button','Save link');form.append(input,save);form.onsubmit=e=>{e.preventDefault();run('update',{id:m.id,url:input.value});};card.append(form);root.append(card);
  }
 }
