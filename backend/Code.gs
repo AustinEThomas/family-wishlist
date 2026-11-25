@@ -17,7 +17,7 @@ function doPost(e) {
       return out({error:'Invalid access code.'});
     }
     props.deleteProperty('FAILURES');
-    const s = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Wishlists');
+    const s = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID')).getSheetByName('Wishlists');
     if(!s) return out({error:'Missing Wishlists tab.'});
     const rows = s.getDataRange().getValues().slice(1);
     if(p.action==='add'){
@@ -38,6 +38,8 @@ function doPost(e) {
 }
 function setup(){
  const ss=SpreadsheetApp.getActiveSpreadsheet();
+ if (!ss) throw new Error('Run setup from the bound spreadsheet editor.');
+ PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', ss.getId());
  let s=ss.getSheetByName('Wishlists');
  if(!s)s=ss.insertSheet('Wishlists');
  if(s.getLastRow()===0)s.appendRow(['ID','Name','Wishlist Link','Last Confirmed']);
