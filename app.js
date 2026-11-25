@@ -17,7 +17,7 @@ async function run(action,fields={}){
 }
 function render(members){
  const root=$('members');root.replaceChildren();
- if(!members.length){root.append(node('p','No family members yet. Add one below.'));return;}
+ if(!members.length){root.append(node('p','No family members yet. Use Add member to get started.'));return;}
  const table=node('table','','wishlist-table');
  const head=document.createElement('thead'), hr=document.createElement('tr');
  for(const label of ['Name','Birthday','Wishlist','Last confirmed','Actions']){const th=node('th',label);th.scope='col';hr.append(th);}
@@ -63,7 +63,10 @@ function render(members){
  root.append(table);
 }
 $('login').onsubmit=async e=>{e.preventDefault();code=$('code').value;if(await run('list')){if($('remember').checked)localStorage.setItem('wishlist-access',code);else localStorage.removeItem('wishlist-access');$('code').value='';}};
-$('add').onsubmit=async e=>{e.preventDefault();if(await run('add',{name:$('name').value}))$('name').value='';};
+function toggleAdd(open){$('add').hidden=!open;$('add-toggle').setAttribute('aria-expanded',String(open));if(open)$('name').focus();else{$('name').value='';$('add-toggle').focus();}}
+$('add-toggle').onclick=()=>toggleAdd($('add').hidden);
+$('add-cancel').onclick=()=>toggleAdd(false);
+$('add').onsubmit=async e=>{e.preventDefault();if(await run('add',{name:$('name').value}))toggleAdd(false);};
 $('refresh').onclick=()=>run('list');
-$('logout').onclick=()=>{code='';localStorage.removeItem('wishlist-access');$('members').replaceChildren();$('directory').hidden=true;$('gate').hidden=false;status('');};
+$('logout').onclick=()=>{$('add').hidden=true;$('name').value='';$('add-toggle').setAttribute('aria-expanded','false');code='';localStorage.removeItem('wishlist-access');$('members').replaceChildren();$('directory').hidden=true;$('gate').hidden=false;status('');};
 try{code=localStorage.getItem('wishlist-access')||'';if(code)run('list');}catch(e){}
